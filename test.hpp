@@ -11,7 +11,8 @@ CONTRACT love_tattoo : public contract
     love_tattoo(name self, name code, datastream<const char *> ds) : contract(self, code, ds){};
     ACTION signin(name account, uint64_t type, std::string username, std::string profile, std::string profileurl);
     ACTION matchcouple(name from, name to);
-    ACTION write(name creator, uint64_t posttype, std::string contents, std::string attach_url);
+    ACTION write(name creator, uint64_t posttype, std::string contents, std::string attachurl);
+    ACTION vote(name voter, uint64_t postid, uint64_t islike);
 
     // token
     // ACTION create(name issuer, asset maximum_supply);
@@ -82,7 +83,9 @@ CONTRACT love_tattoo : public contract
     TABLE vote
     {
         uint64_t id;
-        name votor;
+
+        uint64_t post_id;
+        name voter;
 
         // 0 싥어요, 1 좋아요
         uint64_t is_like;
@@ -90,11 +93,14 @@ CONTRACT love_tattoo : public contract
         uint64_t created;
 
         uint64_t primary_key() const { return id; }
-        uint64_t by_votor() const { return votor.value; }
+        uint64_t by_post_id() const { return post_id; }
+        uint64_t by_voter() const { return voter.value; }
     };
 
     typedef multi_index<"users"_n, user, indexed_by<"byowner"_n, const_mem_fun<user, uint64_t, &user::by_owner>>, indexed_by<"bymatchuser"_n, const_mem_fun<user, uint64_t, &user::by_match_user>>> user_index;
-    typedef multi_index<"couples"_n, couple, indexed_by<"byfromuser"_n, const_mem_fun<couple, uint64_t, &user::by_from_user>>, indexed_by<"bytouser"_n, const_mem_fun<couple, uint64_t, &user::by_to_user>>> couple_index;
+    typedef multi_index<"couple"_n, couple, indexed_by<"byfromuser"_n, const_mem_fun<couple, uint64_t, &couple::by_from_user>>, indexed_by<"bytouser"_n, const_mem_fun<couple, uint64_t, &couple::by_to_user>>> couple_index;
+    typedef multi_index<"post"_n, post, indexed_by<"bycreator"_n, const_mem_fun<post, uint64_t, &post::by_creator>>> post_index;
+    typedef multi_index<"vote"_n, vote, indexed_by<"byvoter"_n, const_mem_fun<vote, uint64_t, &vote::by_voter>>, indexed_by<"bypostid"_n, const_mem_fun<vote, uint64_t, &vote::by_post_id>>> vote_index;
 
     // token
     //     struct account
