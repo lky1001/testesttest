@@ -5,12 +5,13 @@
 
 using namespace eosio;
 
-CONTRACT love_tatto : public contract
+CONTRACT love_tattoo : public contract
 {
   public:
-    love_tatto(name self, name code, datastream<const char *> ds) : contract(self, code, ds){};
+    love_tattoo(name self, name code, datastream<const char *> ds) : contract(self, code, ds){};
     ACTION signin(name account, uint64_t type, std::string username, std::string profile, std::string profileurl);
     ACTION matchcouple(name from, name to);
+    ACTION write(name creator, uint64_t posttype, std::string contents, std::string attach_url);
 
     // token
     // ACTION create(name issuer, asset maximum_supply);
@@ -93,6 +94,7 @@ CONTRACT love_tatto : public contract
     };
 
     typedef multi_index<"users"_n, user, indexed_by<"byowner"_n, const_mem_fun<user, uint64_t, &user::by_owner>>, indexed_by<"bymatchuser"_n, const_mem_fun<user, uint64_t, &user::by_match_user>>> user_index;
+    typedef multi_index<"couple"_n, user, indexed_by<"byfromuser"_n, const_mem_fun<couple, uint64_t, &user::by_from_user>>, indexed_by<"bytouser"_n, const_mem_fun<couple, uint64_t, &user::by_to_user>>> couple_index;
 
     // token
     //     struct account
