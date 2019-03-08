@@ -1,12 +1,14 @@
+#include "love_tatto.hpp"
+
 void love_tatto::signin(name account, uint64_t type, std::string username, std::string profile, std::string profileurl)
 {
     require_auth(account);
 
-    user_index user_table(_code, _code);
-    auto user_name_index = user_index.get_index<"byowner"_n>();
+    user_index user_table(_code, _code.value);
+    auto user_name_index = user_table.get_index<"byowner"_n>();
     auto iterator = user_name_index.find(account.value);
 
-    if (iterator != user_table.end())
+    if (iterator != user_name_index.end())
     {
         eosio_assert(false, "account already exist.");
     }
