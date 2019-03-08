@@ -94,7 +94,7 @@ CONTRACT love_tattoo : public contract
     };
 
     typedef multi_index<"users"_n, user, indexed_by<"byowner"_n, const_mem_fun<user, uint64_t, &user::by_owner>>, indexed_by<"bymatchuser"_n, const_mem_fun<user, uint64_t, &user::by_match_user>>> user_index;
-    typedef multi_index<"couple"_n, user, indexed_by<"byfromuser"_n, const_mem_fun<couple, uint64_t, &user::by_from_user>>, indexed_by<"bytouser"_n, const_mem_fun<couple, uint64_t, &user::by_to_user>>> couple_index;
+    typedef multi_index<"couples"_n, couple, indexed_by<"byfromuser"_n, const_mem_fun<couple, uint64_t, &user::by_from_user>>, indexed_by<"bytouser"_n, const_mem_fun<couple, uint64_t, &user::by_to_user>>> couple_index;
 
     // token
     //     struct account
