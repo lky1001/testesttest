@@ -166,6 +166,28 @@ void love_tattoo::write(name creator, uint64_t posttype, uint64_t missionid, std
 
 void love_tattoo::vote(name votor, uint64_t postid, uint64_t islike)
 {
+    require_auth(voter);
+    
+    vote_index vote_table(_code, _code.value);
+    auto by_voter_index = vote_table.get_index<"byvoter"_n>();
+    auto iterator = by_voter_index.find(votor.value);
+
+    //보팅은 하나의 포스트에 한번만 할 수 있음
+    if (iterator == by_voter_index.end())
+    {
+        uint64_t cur_time = current_time();
+        
+        vote_table.emplace(_code,[&](auto &row) {
+            row.id = vote_table.available_primary_key();
+            row.post_id = postid;
+            row.voter = votor;
+            row.is_like = islike;
+            row.created = cur_time;
+        });
+    }else{
+        //보팅이 했었다면 예외
+        eosio_assert(false, "you already made a vote.");
+    }
 }
 
 void love_tattoo::newmission(std::string text, std::string imageurl, uint64_t startdate, uint64_t enddate)
